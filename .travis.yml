@@ -11,6 +11,7 @@ matrix:
   include:
     - php: 7.1
       env:
+        - RELEASE=1
         - LINT_TEST=1
         - SYMFONY="4.0.*"
     - php: 7.2
@@ -36,3 +37,17 @@ before_script:
 script:
   - vendor/bin/phpunit --color tests
   - if [[ $LINT_TEST ]]; then composer run-script lint; fi
+
+before_deploy:
+  - if [[ -n "${TRAVIS_TAG}" ]]; then php build.php; fi
+
+deploy:
+  provider: releases
+  api_key:
+    secure: rgXAVRr3oQ6RRcyt74hhb3ClHemY3i1tjoimeNhljrQ1hZzVUoX4wOxqDN+WFE/UQh3dVCRbo94xRoeZmou+zVomOCOiw1WAoUR78p73wIkhApwglgTtn908vYIXIUKT8IwtcWINU5LjZlWGvy5ISe0xh2GpTAnXeF7wiYuzyX3hr9bLvu2UH9ZjRbqpn8rHYBlN2GQdv6O/Ecc800uXnmrS7Rj2i8kZVwGuloxf8PaYnnVc8dDZSq2hjRmxjILOBfzFhSMnCk0qbMkIMMd1Mt3YJjjN+pNGaKl6tRcTcXL4SH6JhxNE6lWPsyBNu8dXKFvCTnk1J7nBRTwHSm7p2QsWOgoLNCgEVVA/avDpUNp95bUhrIY6zoIUBJn99FOkdJpV12dw+yfVU4rJose7iJWF/i6AkfA9L9nxRgdKG9qnye+c3OuCZoqGZISHUiv/bwucmdbbKImnXd8jQiYeQolyDQs7c/8NBmHp4ZRr6N6Kur1eKvoRMtzjsSchSt7IcQTLNWu0jnOq5zTzshQ7W+/N62tDGjSclTdoYn77mkVHHXO3Mm8x/wg+cf9E+wQTePb8JGiIfUo4UPE7p5fGy+DQUsKj7GeDs+jvn3vogIdIWzl3q/QG4rqhL0d1RccHEcKQCcF9VL9lQeYUPjcvwMrB0rGwcACNrJsrG8SJXkM=
+  file: upgrade-code.phar
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: silverstripe/silverstripe-upgrader
+    condition: -n $RELEASE
