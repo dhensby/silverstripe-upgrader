@@ -41,7 +41,7 @@ script:
 before_deploy:
   - if [[ ! -f ./release/upgrade-code.phar ]]; then php build.php; fi
   - mkdir -p ./release
-  - if [[ -f ./release/upgrade-code.phar ]]; then mv upgrade-code.phar ./release/; fi
+  - if [[ -f ./upgrade-code.phar ]]; then mv upgrade-code.phar ./release/; fi
 
 deploy:
   - provider: releases
